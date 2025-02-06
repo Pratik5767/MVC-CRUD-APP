@@ -1,7 +1,6 @@
 package com.controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -69,7 +68,6 @@ public class ControllerServlet extends HttpServlet {
 			String sid = request.getParameter("sid");
 
 			String status = studentService.deleteStudent(Integer.parseInt(sid));
-			PrintWriter out = response.getWriter();
 
 			if (status.equals("success")) {
 				request.setAttribute("status", "success");
@@ -84,50 +82,25 @@ public class ControllerServlet extends HttpServlet {
 				dispature = request.getRequestDispatcher("../deleteResult.jsp");
 				dispature.forward(request, response);
 			}
-			out.close();
 		}
 
 		// Update
 		if (request.getRequestURI().endsWith("editform")) {
 			String sid = request.getParameter("sid");
-
-			Student std = studentService.searchStudent(Integer.parseInt(sid));
-			PrintWriter out = response.getWriter();
-
-			if (std != null) {
-				out.println("<body>");
-				out.println("<center>");
-				out.println("<form method='post' action='./controller/updateRecord'>");
-				out.println("<table>");
-				out.println("<tr><th>ID</th><td> " + std.getSid() + "</td></tr>");
-				out.println("<input type='hidden' name='sid' value='"+std.getSid()+"'/>");
-				out.println("<tr><th>NAME</th><td><input type='text' name='sname' value='" + std.getSname()
-						+ "'/></td></tr>");
-				out.println(
-						"<tr><th>AGE</th><td><input type='text' name='sage' value='" + std.getSage() + "'/></td></tr>");
-				out.println("<tr><th>ADDRESS</th><td><input type='text' name='saddr' value='" + std.getSaddress()
-						+ "'/></td></tr>");
-				out.println("<tr><td><input type='submit' value='update'/></td></tr>");
-				out.println("</table>");
-				out.println("</form>");
-				out.println("</center>");
-				out.println("</body>");
-			} else {
-				out.println("<body>");
-				out.println("<h1 style='color: red; text-align: center;'>RECORD NOT AVAILABLE FOR THE GIVEN ID :: "
-						+ sid + "</h1>");
-				out.println("<body/>");
+			Student student = studentService.searchStudent(Integer.parseInt(sid));
+			
+			if (student != null) {
+				request.setAttribute("student", student);
+				dispature  = request.getRequestDispatcher("../updateForm.jsp");
+				dispature.forward(request, response);
 			}
-			out.close();
 		}
 		
 		if (request.getRequestURI().endsWith("updateRecord")) {
-			PrintWriter out = response.getWriter();
-			
 			String id = request.getParameter("sid");
 			String name = request.getParameter("sname");
 			String age = request.getParameter("sage");
-			String addr = request.getParameter("saddr");
+			String addr = request.getParameter("saddress");
 			
 			Student student = new Student();
 			student.setSid(Integer.parseInt(id));
@@ -137,13 +110,14 @@ public class ControllerServlet extends HttpServlet {
 			
 			String status = studentService.updateStudent(student);
 			if (status.equals("success")) {
-				dispature = request.getRequestDispatcher("../../updateSuccess.html");
+				request.setAttribute("status", "success");
+				dispature = request.getRequestDispatcher("../../updateResult.jsp");
 				dispature.forward(request, response);
 			} else {
-				dispature = request.getRequestDispatcher("../../updateFailed.html");
+				request.setAttribute("status", "failed");
+				dispature = request.getRequestDispatcher("../../updateResult.jsp");
 				dispature.forward(request, response);
 			}
-			out.close();
 		}
 	}
 }

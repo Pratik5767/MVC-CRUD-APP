@@ -8,6 +8,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
 public class JdbcUtil {
 	// so that no object should be created
 	private JdbcUtil() {
@@ -24,18 +27,21 @@ public class JdbcUtil {
 
 	// Establish the connection
 	public static Connection getJdbcConnection() throws SQLException, IOException {
-		/*
-		 * String fileLoc =
-		 * "D:\\Pratik\\Java Web Applications\\MVC-Crud-App\\src\\main\\java\\com\\properties\\application.properties"
-		 * ; HikariConfig config = new HikariConfig(fileLoc); HikariDataSource
-		 * dataSource = new HikariDataSource(config); return dataSource.getConnection();
-		 */
-		return physicalConnection();
+		return logicalConnection();
+
+		// return physicalConnection();
+	}
+
+	private static Connection logicalConnection() throws SQLException {
+		String fileLoc = "D:\\Pratik\\git\\MVC-Crud-repo\\MVC-Crud-App\\src\\main\\java\\com\\properties\\application.properties";
+		HikariConfig config = new HikariConfig(fileLoc);
+		HikariDataSource dataSource = new HikariDataSource(config);
+		return dataSource.getConnection();
 	}
 
 	public static Connection physicalConnection() throws SQLException, IOException, FileNotFoundException {
 		FileInputStream fis = new FileInputStream(
-				"D:\\Pratik\\Java Web Applications\\MVC-Crud-App\\src\\main\\java\\com\\properties\\application.properties");
+				"D:\\Pratik\\git\\MVC-Crud-repo\\MVC-Crud-App\\src\\main\\java\\com\\properties\\application.properties");
 		Properties properties = new Properties();
 		properties.load(fis);
 
